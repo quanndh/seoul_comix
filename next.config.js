@@ -18,11 +18,11 @@ const nextConfig = {
           { key: "Access-Control-Allow-Credentials", value: "true" },
           {
             key: "Access-Control-Allow-Origin",
-            value: [
-              "https://seoul-comix.vercel.app",
-              "localhost:3000",
-              process.env.NEXT_PUBLIC_VERCEL_URL,
-            ],
+            value: "https://seoul-comix.vercel.app",
+          },
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "localhost:3000",
           },
           {
             key: "Access-Control-Allow-Methods",
