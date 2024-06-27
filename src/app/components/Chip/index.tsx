@@ -6,11 +6,13 @@ import { useEffect, useState } from "react";
 interface Props {
   id: number;
   text: string;
+  value: string;
   isActive: boolean;
-  onClick: (id: number) => void;
+  onClick: (value: string) => void;
 }
 
 interface ChipListProps {
+  value?: string;
   data: Array<{ text: string; value: string }>;
   onChange: (value: string) => void;
 }
@@ -18,12 +20,13 @@ interface ChipListProps {
 const Chip: React.FC<Props> & { List: typeof ChipList } = ({
   id,
   text,
+  value,
   isActive,
   onClick,
 }) => {
   return (
     <div
-      onClick={() => onClick(id)}
+      onClick={() => onClick(value)}
       className={classNames(
         "w-fit h-18 px-3 py-2 rounded-lg font-semibold transition-all duration-200 cursor-pointer",
         {
@@ -37,16 +40,16 @@ const Chip: React.FC<Props> & { List: typeof ChipList } = ({
   );
 };
 
-const ChipList: React.FC<ChipListProps> = ({ data, onChange }) => {
-  const [active, setActive] = useState(-1);
+const ChipList: React.FC<ChipListProps> = ({ value, data, onChange }) => {
+  const [active, setActive] = useState(value ?? "");
 
   useEffect(() => {
-    onChange(active !== -1 ? data[active].value : "");
+    onChange(active);
   }, [active]);
 
-  const handleClick = (id: number) => {
+  const handleClick = (id: string) => {
     setActive((prev) => {
-      if (prev === id) return -1;
+      if (prev === id) return "";
       return id;
     });
   };
@@ -58,7 +61,7 @@ const ChipList: React.FC<ChipListProps> = ({ data, onChange }) => {
           key={index}
           {...item}
           id={index}
-          isActive={active === index}
+          isActive={active === item.value}
           onClick={handleClick}
         />
       ))}

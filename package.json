@@ -24,6 +24,7 @@
     "dotenv": "^16.4.5",
     "eslint": "8.40.0",
     "eslint-config-next": "13.4.2",
+    "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "next": "13.4.2",
     "postcss": "8.4.23",
@@ -38,5 +39,8 @@
     "tailwindcss": "3.3.2",
     "typescript": "5.0.4",
     "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.5"
   }
 }

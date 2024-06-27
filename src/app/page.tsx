@@ -4,12 +4,12 @@ import Chip from "@/app/components/Chip";
 import RestaurantListEmptyState from "@/app/components/EmptyState/RestaurantListEmptyState";
 import RestaurantCard from "@/app/components/RestaurantCard";
 import SearchBar from "@/app/components/SearchBar";
-import { useDebounce } from "@/app/hooks/useDebounce";
 import { getListCategory } from "@/utils";
 import { trpc } from "@/utils/trpc";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { debounce } from "lodash";
+import { useState } from "react";
 
 export default function Home() {
   const router = useRouter();
@@ -17,17 +17,16 @@ export default function Home() {
   const pathname = usePathname();
 
   const category = searchParams.get("category") || undefined;
+  const searchQuery = searchParams.get("keyword") || undefined;
 
-  const [search, setSearch] = useState("");
-
-  const debouncedSearch = useDebounce(search, 200);
+  const [search, setSearch] = useState(searchQuery);
 
   const {
     data: restaurants,
     isLoading,
     refetch,
   } = trpc.restaurant.getRestaurants.useQuery({
-    search: debouncedSearch,
+    search: searchQuery,
     category,
   });
 
@@ -44,14 +43,18 @@ export default function Home() {
 
   const handleChange = (value: string, key: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (!!value) {
+    if (value) {
       params.set(key, value);
-      router.replace(`${pathname}?${params}`);
+      router.push(`${pathname}?${params}`);
     } else {
       params.delete(key);
-      router.replace(`${pathname}?${params}`);
+      router.push(`${pathname}?${params}`);
     }
   };
+
+  const debouncedHandleChangeKeyword = debounce((value: string) => {
+    handleChange(value, "keyword");
+  }, 300);
 
   const handleFavorite = async (id: string) => {
     await mutateAsync({ id });
@@ -59,9 +62,16 @@ export default function Home() {
 
   return (
     <div className="">
-      <SearchBar value={search} onChange={(v) => setSearch(v)} />
+      <SearchBar
+        value={search}
+        onChange={(v) => {
+          setSearch(v);
+          debouncedHandleChangeKeyword(v);
+        }}
+      />
       <div className="h-6" />
       <Chip.List
+        value={category}
         data={getListCategory()}
         onChange={(value) => {
           handleChange(value, "category");

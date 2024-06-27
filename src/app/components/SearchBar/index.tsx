@@ -1,7 +1,7 @@
 import { IoIosSearch } from "react-icons/io";
 
 interface Props {
-  value: string;
+  value?: string;
   onChange: (value: string) => void;
 }
 
